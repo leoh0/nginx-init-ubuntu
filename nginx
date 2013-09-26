@@ -67,12 +67,12 @@
 #                               Consts
 #------------------------------------------------------------------------------
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/local/nginx/sbin/nginx
+DAEMON=/opt/nginx-0.8.41/sbin/nginx
 
 PS="nginx"
 PIDNAME="nginx"                     #lets you do $PS-slave
 PIDFILE=$PIDNAME.pid                #pid file
-PIDSPATH=/usr/local/nginx/logs      #default pid location, you should change it
+PIDSPATH=/var/run                   #default pid location, you should change it
 
 DESCRIPTION="Nginx Server..."
 
@@ -84,7 +84,7 @@ TRUE=1                              #boolean
 FALSE=0                             #boolean
 
 lockfile=/var/lock/subsys/nginx
-NGINX_CONF_FILE="/usr/local/nginx/conf/nginx.conf"
+NGINX_CONF_FILE="/etc/nginx/nginx.conf"
 
 #------------------------------------------------------------------------------
 #                               Simple Tests
@@ -200,6 +200,7 @@ start() {
     if [ "${isAlive}" -eq $TRUE ]; then
         log_end_msg $SCRIPT_ERROR
     else
+        sed -i "s/daemon off/daemon on/g" /etc/nginx/nginx.conf
         start-stop-daemon --start --quiet --chuid \
         $RUNAS --pidfile $PIDSPATH/$PIDFILE --exec $DAEMON \
         -- -c $NGINX_CONF_FILE
